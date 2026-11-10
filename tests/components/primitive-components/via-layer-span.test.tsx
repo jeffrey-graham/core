@@ -16,6 +16,18 @@ it("pcb_via.layers includes intermediate inner layers on a 4-layer board", () =>
   expect(pcbVia.layers).toEqual(["top", "inner1", "inner2", "bottom"])
   expect(pcbVia.from_layer).toBe("top")
   expect(pcbVia.to_layer).toBe("bottom")
+  expect(project.db.source_port.list().map((port) => port.name)).toEqual([
+    "top",
+    "inner1",
+    "inner2",
+    "bottom",
+  ])
+  expect(project.db.pcb_port.list().map((port) => port.layers)).toEqual([
+    ["top"],
+    ["inner1"],
+    ["inner2"],
+    ["bottom"],
+  ])
 })
 
 it("pcb_via.layers spans only the crossed layers for a partial-span via", () => {
@@ -31,6 +43,16 @@ it("pcb_via.layers spans only the crossed layers for a partial-span via", () => 
 
   const [pcbVia] = project.db.pcb_via.list()
   expect(pcbVia.layers).toEqual(["top", "inner1", "inner2"])
+  expect(project.db.source_port.list().map((port) => port.name)).toEqual([
+    "top",
+    "inner1",
+    "inner2",
+  ])
+  expect(project.db.pcb_port.list().map((port) => port.layers)).toEqual([
+    ["top"],
+    ["inner1"],
+    ["inner2"],
+  ])
 })
 
 it("pcb_via.layers stays [top, bottom] on a 2-layer board", () => {

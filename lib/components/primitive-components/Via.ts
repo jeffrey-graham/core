@@ -23,7 +23,6 @@ export class Via extends PrimitiveComponent<typeof viaProps> {
     super(props)
     const layers = this._getLayers()
     ;(this._parsedProps as any).layers = layers
-    this.initPorts()
   }
   get config() {
     return {
@@ -95,12 +94,27 @@ export class Via extends PrimitiveComponent<typeof viaProps> {
   }
 
   initPorts() {
-    const layers = (this._parsedProps as any).layers as LayerRef[]
+    const existingPortNames = new Set(
+      this.children
+        .filter((child): child is Port => child instanceof Port)
+        .map((port) => port.props.name),
+    )
+    const layers = this._getLayers()
+    ;(this._parsedProps as any).layers = layers
     for (const layer of layers) {
+      if (existingPortNames.has(layer)) continue
       const port = new Port({ name: layer, layer })
       port.registerMatch(this)
       this.add(port)
     }
+  }
+
+  doInitialInitializePortsFromChildren(): void {
+    this.initPorts()
+  }
+
+  updateInitializePortsFromChildren(): void {
+    this.initPorts()
   }
 
   /**

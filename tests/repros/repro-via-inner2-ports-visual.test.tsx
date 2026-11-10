@@ -50,6 +50,28 @@ test("snapshot missing inner2 connection between through vias", async () => {
         ),
     )
   const connected = inner2Traces.length === 1
+  expect(connected).toBe(true)
+  expect(circuit.db.source_trace_not_connected_error.list()).toHaveLength(0)
+  expect(circuit.db.source_port.list().map((port) => port.name)).toEqual([
+    "top",
+    "inner1",
+    "inner2",
+    "bottom",
+    "top",
+    "inner1",
+    "inner2",
+    "bottom",
+  ])
+  expect(circuit.db.pcb_port.list().map((port) => port.layers)).toEqual([
+    ["top"],
+    ["inner1"],
+    ["inner2"],
+    ["bottom"],
+    ["top"],
+    ["inner1"],
+    ["inner2"],
+    ["bottom"],
+  ])
   const explanationSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="144" viewBox="0 0 1800 144">
     <rect width="1800" height="144" fill="#141414" />
     <g font-family="sans-serif" text-anchor="middle">
